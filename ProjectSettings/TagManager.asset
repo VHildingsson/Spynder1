@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Bug
+  - Web
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Bugs
+  - Web
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Spawner
+    uniqueID: 311050881
+    locked: 0
+  - name: Web
+    uniqueID: 2223086365
+    locked: 0
+  - name: WebNodes
+    uniqueID: 2064177819
+    locked: 0
+  - name: FlyBody
+    uniqueID: 781189289
+    locked: 0
+  - name: FlyWing
+    uniqueID: 3047145881
+    locked: 0

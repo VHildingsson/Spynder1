@@ -1,0 +1,334 @@
+fileFormatVersion: 2
+guid: 00af292af9a3d134a8f4139c2126517c
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 9
+  spritePivot: {x: 0.4896978, y: 0.3456306}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CaughtBugBreak_0
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 634
+        width: 179
+        height: 139
+      alignment: 9
+      pivot: {x: 0.5218987, y: 0.48746672}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e03a69cd5431b647a599cd3aecbd68b
+      internalID: -1516715617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_1
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 604
+        width: 170
+        height: 223
+      alignment: 9
+      pivot: {x: 0.47181898, y: 0.5761705}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90a87c6fe569a8c40aeb54ee47e9dbd0
+      internalID: 1073779639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_2
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 614
+        width: 203
+        height: 190
+      alignment: 9
+      pivot: {x: 0.5472012, y: 0.39226234}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d059c36b65b2f042a27629cf9cf1e4e
+      internalID: -717554757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_3
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 388
+        width: 206
+        height: 196
+      alignment: 9
+      pivot: {x: 0.39428726, y: 0.49777797}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0de4c223dab1e5d449ef05739435d273
+      internalID: -1001496480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_4
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 303
+        width: 232
+        height: 189
+      alignment: 9
+      pivot: {x: 0.48310432, y: 0.58065504}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d74d19c95ffb0e14db05589c2ba0089a
+      internalID: -1968702273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_5
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 308
+        width: 201
+        height: 263
+      alignment: 9
+      pivot: {x: 0.6408455, y: 0.5264966}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2645f6a3528047548ac3e591839f111b
+      internalID: 77300615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_6
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 128
+        width: 222
+        height: 189
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1abf040137584514692cecc580f6411e
+      internalID: 466138776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_7
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 208
+        width: 4
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4526bcb0e0e61a1409011e97e0c2a4a5
+      internalID: -535857372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_8
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 89
+        width: 152
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ecc01482f963164c9033ac8105cffdf
+      internalID: -83625205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CaughtBugBreak_9
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 31
+        width: 236
+        height: 150
+      alignment: 9
+      pivot: {x: 0.47600877, y: 0.50580746}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b0ad1739abe2ce44bda4fd8777aa794
+      internalID: 1337731783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      CaughtBugBreak_0: -1516715617
+      CaughtBugBreak_1: 1073779639
+      CaughtBugBreak_2: -717554757
+      CaughtBugBreak_3: -1001496480
+      CaughtBugBreak_4: -1968702273
+      CaughtBugBreak_5: 77300615
+      CaughtBugBreak_6: 466138776
+      CaughtBugBreak_7: -535857372
+      CaughtBugBreak_8: -83625205
+      CaughtBugBreak_9: 1337731783
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
