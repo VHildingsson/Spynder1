@@ -17,7 +17,7 @@ public class CaughtBug : MonoBehaviour
     private void OnMouseDown()
     {
         // Only allow interaction if it's not breaking and Pickup Tool is active
-        if (isBreaking || ToolManager.Instance.currentTool != ToolManager.ToolMode.PickupTool)
+        if (isBreaking || ToolManager.Instance.currentTool != ToolManager.ToolMode.SpiderTool)
         {
             return;
         }

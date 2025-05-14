@@ -1,0 +1,76 @@
+{
+    "name": "SpynderControls",
+    "maps": [
+        {
+            "name": "SpynderControls",
+            "id": "e0de921a-8006-427b-b5b4-7ad0372e0852",
+            "actions": [
+                {
+                    "name": "SwitchTool",
+                    "type": "Button",
+                    "id": "711845fb-ecce-4d99-bc61-db02e2fa9607",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToolAction",
+                    "type": "Button",
+                    "id": "da5d8470-2c12-42ab-8806-3cea270dbd12",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "110f9511-aeec-44dc-b224-b0711546b67d",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchTool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "34a40161-b326-491f-a3f5-5bf8e47f382e",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchTool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "18e5690e-f0d3-4b0a-a6ac-2f9dbfc6bc87",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToolAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f919030c-82fa-4a38-b66e-3a2aa08bec53",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToolAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

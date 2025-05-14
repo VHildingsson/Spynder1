@@ -21,9 +21,9 @@ public class WebDrawing : MonoBehaviour
     public float maxWebLength = 5f;
     public float webThickness = 0.1f;
 
-    private static List<GameObject> activeWebs = new List<GameObject>(); // Track placed webs
-    private static List<GameObject> activeNodes = new List<GameObject>(); // Track nodes
-    public int maxWebsAllowed = 2; // Max number of webs allowed at once
+    private List<GameObject> activeWebs = new List<GameObject>();
+    private List<GameObject> activeNodes = new List<GameObject>();
+    public int maxWebsAllowed = 2;
 
     private void Awake()
     {
@@ -37,94 +37,137 @@ public class WebDrawing : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (ToolManager.Instance.currentTool != ToolManager.ToolMode.WebTool || activeWebs.Count >= maxWebsAllowed)
+        if (isDrawing && currentWeb != null)
         {
-            return;
+            UpdateCurrentWeb();
+        }
+    }
+
+    public bool CanStartNewWeb()
+    {
+        return ToolManager.Instance.currentTool == ToolManager.ToolMode.WebTool;
+    }
+
+    public void StartPotentialWeb()
+    {
+        if (!CanStartNewWeb()) return;
+
+        // Remove oldest web if we're at max capacity
+        if (activeWebs.Count >= maxWebsAllowed)
+        {
+            RemoveOldestWeb();
         }
 
-        if (Input.GetMouseButtonDown(0))
+        startPoint = CursorManager.Instance.GetCursorWorldPosition();
+        startPoint.z = 0;
+        isDrawing = true;
+
+        CreateWebObjects();
+        SetupWebCollision();
+    }
+
+    private void RemoveOldestWeb()
+    {
+        if (activeWebs.Count == 0) return;
+
+        // Get the oldest web (first in list)
+        GameObject oldestWeb = activeWebs[0];
+        GameObject startNode = null;
+        GameObject endNode = null;
+
+        // Find associated nodes
+        WebCollision webScript = oldestWeb.GetComponent<WebCollision>();
+        if (webScript != null)
         {
-            if (activeWebs.Count >= maxWebsAllowed) return;
-
-            startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            startPoint.z = 0;
-            isDrawing = true;
-
-            // Spawn web at start point
-            currentWeb = Instantiate(webPrefab, startPoint, Quaternion.identity);
-            currentWeb.transform.localScale = new Vector3(0.01f, webThickness, 1);
-
-            // Disable collider while drawing
-            webCollider = currentWeb.GetComponent<Collider2D>();
-            if (webCollider != null)
-            {
-                webCollider.enabled = false;
-            }
-
-            // Spawn start marker
-            startMarker = Instantiate(startMarkerPrefab, startPoint, Quaternion.identity);
-            activeNodes.Add(startMarker);
-
-            // Spawn end marker immediately
-            endMarker = Instantiate(endMarkerPrefab, startPoint, Quaternion.identity);
-            activeNodes.Add(endMarker);
-
-            // Assign the nodes to the web's WebCollision component
-            WebCollision webScript = currentWeb.GetComponent<WebCollision>();
-            if (webScript != null)
-            {
-                webScript.startMarker = startMarker;
-                webScript.endMarker = endMarker;
-            }
+            startNode = webScript.startMarker;
+            endNode = webScript.endMarker;
         }
 
-        if (Input.GetMouseButton(0) && isDrawing)
+        // Destroy the web and its nodes
+        DestroyWeb(oldestWeb, startNode, endNode);
+    }
+
+    private void UpdateCurrentWeb()
+    {
+        Vector3 currentEndPoint = CursorManager.Instance.GetCursorWorldPosition();
+        currentEndPoint.z = 0;
+
+        if (Vector3.Distance(startPoint, currentEndPoint) > maxWebLength)
         {
-            Vector3 tempEndPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            tempEndPoint.z = 0;
-
-            if (Vector3.Distance(startPoint, tempEndPoint) > maxWebLength)
-            {
-                Vector3 direction = (tempEndPoint - startPoint).normalized;
-                tempEndPoint = startPoint + (direction * maxWebLength);
-            }
-
-            finalEndPoint = tempEndPoint;
-            UpdateWebPosition(startPoint, finalEndPoint);
+            Vector3 direction = (currentEndPoint - startPoint).normalized;
+            currentEndPoint = startPoint + (direction * maxWebLength);
         }
 
-        if (Input.GetMouseButtonUp(0) && isDrawing)
+        finalEndPoint = currentEndPoint;
+        UpdateWebPosition(startPoint, finalEndPoint);
+    }
+
+    private void CreateWebObjects()
+    {
+        currentWeb = Instantiate(webPrefab, startPoint, Quaternion.identity);
+        currentWeb.transform.localScale = new Vector3(0.01f, webThickness, 1);
+
+        webCollider = currentWeb.GetComponent<Collider2D>();
+        if (webCollider != null) webCollider.enabled = false;
+
+        startMarker = Instantiate(startMarkerPrefab, startPoint, Quaternion.identity);
+        activeNodes.Add(startMarker);
+        endMarker = Instantiate(endMarkerPrefab, startPoint, Quaternion.identity);
+        activeNodes.Add(endMarker);
+    }
+
+    private void SetupWebCollision()
+    {
+        WebCollision webScript = currentWeb.GetComponent<WebCollision>();
+        if (webScript != null)
         {
-            isDrawing = false;
+            webScript.startMarker = startMarker;
+            webScript.endMarker = endMarker;
+        }
+    }
 
-            if (currentWeb != null)
-            {
-                if (webCollider != null)
-                {
-                    webCollider.enabled = true;
-                }
+    public void ReleaseWeb()
+    {
+        if (!isDrawing || currentWeb == null) return;
 
-                if (endMarker != null)
-                {
-                    endMarker.transform.position = GetAccurateEndMarkerPosition();
-                    RotateMarker(endMarker, startPoint, finalEndPoint);
-                }
+        FinalizeWeb();
+        CleanUpCurrentWeb();
+        ScheduleWebRemoval();
+    }
 
-                if (startMarker != null)
-                {
-                    RotateMarker(startMarker, startPoint, finalEndPoint);
-                }
+    private void FinalizeWeb()
+    {
+        if (webCollider != null) webCollider.enabled = true;
 
-                activeWebs.Add(currentWeb);
+        if (endMarker != null)
+        {
+            endMarker.transform.position = GetAccurateEndMarkerPosition();
+            RotateMarker(endMarker, startPoint, finalEndPoint);
+        }
 
-                RemoveWebAfterDelay(currentWeb, startMarker, endMarker, 2f);
-            }
+        if (startMarker != null)
+        {
+            RotateMarker(startMarker, startPoint, finalEndPoint);
+        }
 
-            currentWeb = null;
-            startMarker = null;
-            endMarker = null;
+        activeWebs.Add(currentWeb);
+    }
+
+    private void CleanUpCurrentWeb()
+    {
+        isDrawing = false;
+        currentWeb = null;
+        startMarker = null;
+        endMarker = null;
+    }
+
+    private void ScheduleWebRemoval()
+    {
+        if (currentWeb != null && startMarker != null && endMarker != null)
+        {
+            RemoveWebAfterDelay(currentWeb, startMarker, endMarker, 2f);
         }
     }
 
@@ -136,9 +179,10 @@ public class WebDrawing : MonoBehaviour
         activeNodes.Remove(startNode);
         activeNodes.Remove(endNode);
 
+
         Destroy(web);
-        Destroy(startNode);
-        Destroy(endNode);
+        if (startNode != null) Destroy(startNode);
+        if (endNode != null) Destroy(endNode);
     }
 
     void RemoveWebAfterDelay(GameObject web, GameObject startNode, GameObject endNode, float delay)
@@ -157,12 +201,15 @@ public class WebDrawing : MonoBehaviour
         if (currentWeb == null) return;
 
         float length = Vector3.Distance(start, end);
-
         currentWeb.transform.position = start;
         RotateMarker(currentWeb, start, end);
-        float baseSpriteLength = 1f;
-        currentWeb.transform.localScale = new Vector3(length / baseSpriteLength, webThickness, 1);
+        currentWeb.transform.localScale = new Vector3(length, webThickness, 1);
 
+        UpdateMarkers(start, end);
+    }
+
+    private void UpdateMarkers(Vector3 start, Vector3 end)
+    {
         if (startMarker != null)
         {
             startMarker.transform.position = start;
@@ -178,9 +225,8 @@ public class WebDrawing : MonoBehaviour
 
     Vector3 GetAccurateEndMarkerPosition()
     {
-        float webScale = currentWeb.transform.localScale.x;
         Vector3 direction = (finalEndPoint - startPoint).normalized;
-        return startPoint + direction * webScale;
+        return startPoint + direction * currentWeb.transform.localScale.x;
     }
 
     void RotateMarker(GameObject marker, Vector3 start, Vector3 end)
@@ -190,28 +236,3 @@ public class WebDrawing : MonoBehaviour
         marker.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ToolManager : MonoBehaviour
 {
     public static ToolManager Instance;
 
-    public enum ToolMode { WebTool, PickupTool }
+    public enum ToolMode { WebTool, SpiderTool }
     public ToolMode currentTool = ToolMode.WebTool;
+
+    private bool isHoldingForWeb = false;
+    private float webHoldStartTime = 0f;
+    private const float webHoldThreshold = 0.3f;
 
     private void Awake()
     {
@@ -19,33 +24,57 @@ public class ToolManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Gamepad.current == null) return;
+
+        // Tool switching with Circle button
+        if (Gamepad.current.buttonEast.wasPressedThisFrame)
         {
             ToggleTool();
+        }
+
+        // Tool actions with X button
+        if (Gamepad.current.buttonSouth.isPressed && !isHoldingForWeb)
+        {
+            if (currentTool == ToolMode.WebTool)
+            {
+                isHoldingForWeb = true;
+                webHoldStartTime = Time.time;
+                WebDrawing.Instance?.StartPotentialWeb();
+            }
+            else
+            {
+                // Spider tool action (instant eat)
+                Vector3 worldPos = CursorManager.Instance.GetCursorWorldPosition();
+                worldPos.z = 0;
+
+                Collider2D[] hits = Physics2D.OverlapPointAll(worldPos);
+                foreach (var hit in hits)
+                {
+                    if (hit.CompareTag("WebbedInsect"))
+                    {
+                        Destroy(hit.gameObject);
+                    }
+                }
+            }
+        }
+
+        // Web release
+        if (isHoldingForWeb && Gamepad.current.buttonSouth.wasReleasedThisFrame)
+        {
+            WebDrawing.Instance.ReleaseWeb();
+            isHoldingForWeb = false;
         }
     }
 
     void ToggleTool()
     {
-        if (currentTool == ToolMode.WebTool)
-        {
-            currentTool = ToolMode.PickupTool;
-            Debug.Log("Switched to Pickup Tool");
-        }
-        else
-        {
-            currentTool = ToolMode.WebTool;
-            Debug.Log("Switched to Web Tool");
-        }
+        currentTool = currentTool == ToolMode.WebTool ? ToolMode.SpiderTool : ToolMode.WebTool;
 
-        // Update the cursor whenever the tool changes
         if (CursorManager.Instance != null)
         {
             CursorManager.Instance.UpdateCursor(currentTool);
         }
     }
 }
-
-
