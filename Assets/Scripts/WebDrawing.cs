@@ -132,9 +132,16 @@ public class WebDrawing : MonoBehaviour
     {
         if (!isDrawing || currentWeb == null) return;
 
+        // Store references before cleanup
+        GameObject webToDestroy = currentWeb;
+        GameObject startToDestroy = startMarker;
+        GameObject endToDestroy = endMarker;
+
         FinalizeWeb();
         CleanUpCurrentWeb();
-        ScheduleWebRemoval();
+
+        // Use the stored references
+        RemoveWebAfterDelay(webToDestroy, startToDestroy, endToDestroy, 2f); // 2 second lifetime
     }
 
     private void FinalizeWeb()
@@ -163,14 +170,6 @@ public class WebDrawing : MonoBehaviour
         endMarker = null;
     }
 
-    private void ScheduleWebRemoval()
-    {
-        if (currentWeb != null && startMarker != null && endMarker != null)
-        {
-            RemoveWebAfterDelay(currentWeb, startMarker, endMarker, 2f);
-        }
-    }
-
     public void DestroyWeb(GameObject web, GameObject startNode, GameObject endNode)
     {
         if (web == null) return;
@@ -193,7 +192,25 @@ public class WebDrawing : MonoBehaviour
     private System.Collections.IEnumerator RemoveWebCoroutine(GameObject web, GameObject startNode, GameObject endNode, float delay)
     {
         yield return new WaitForSeconds(delay);
-        DestroyWeb(web, startNode, endNode);
+
+        // Double check they haven't been destroyed already
+        if (web != null)
+        {
+            activeWebs.Remove(web);
+            Destroy(web);
+        }
+
+        if (startNode != null)
+        {
+            activeNodes.Remove(startNode);
+            Destroy(startNode);
+        }
+
+        if (endNode != null)
+        {
+            activeNodes.Remove(endNode);
+            Destroy(endNode);
+        }
     }
 
     void UpdateWebPosition(Vector3 start, Vector3 end)

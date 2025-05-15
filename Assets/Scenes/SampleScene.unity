@@ -817,7 +817,7 @@ MonoBehaviour:
   cursorImage: {fileID: 679380885}
   webToolCursor: {fileID: -9250703, guid: 588fc5914df08b34da846eeba6398a32, type: 3}
   spiderToolCursor: {fileID: 1112669224, guid: cf0709c4987d6804d86ebb93b435ae97, type: 3}
-  cursorSpeed: 500
+  cursorSpeed: 900
 --- !u!1 &679380883
 GameObject:
   m_ObjectHideFlags: 0
