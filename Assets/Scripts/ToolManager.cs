@@ -8,6 +8,8 @@ public class ToolManager : MonoBehaviour
     public enum ToolMode { WebTool, SpiderTool }
     public ToolMode currentTool = ToolMode.WebTool;
 
+    public int scoreValue = 10;
+
     private bool isHoldingForWeb = false;
     private float webHoldStartTime = 0f;
     private const float webHoldThreshold = 0.3f;
@@ -54,6 +56,10 @@ public class ToolManager : MonoBehaviour
                 {
                     if (hit.CompareTag("WebbedInsect"))
                     {
+                        if (ScoreManager.Instance != null)
+                        {
+                            ScoreManager.Instance.AddScore(scoreValue);
+                        }
                         Destroy(hit.gameObject);
                     }
                 }

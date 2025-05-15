@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreValue: 1
-  despawnTime: 5
+  despawnTime: 3
   animator: {fileID: -7740560440832522992}
 --- !u!95 &-7740560440832522992
 Animator:

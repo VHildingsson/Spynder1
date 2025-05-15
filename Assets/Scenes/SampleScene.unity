@@ -348,53 +348,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &260297457
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 260297459}
-  - component: {fileID: 260297458}
-  m_Layer: 0
-  m_Name: BugSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &260297458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260297457}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5ce35613659f5c42a3b1ee6eb064fc4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bugPrefabs:
-  - {fileID: 5165414124601313328, guid: 5170276d4e5f1194ebe20df44cb7898d, type: 3}
-  spawnRate: 2
---- !u!4 &260297459
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260297457}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &300650367
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,9 +878,9 @@ MonoBehaviour:
   webPrefab: {fileID: 4535327994214059195, guid: 275126087434956489e3bcbe55165255, type: 3}
   startMarkerPrefab: {fileID: 1713281099186996304, guid: 7007d7193b3be36469fae8595311a415, type: 3}
   endMarkerPrefab: {fileID: 7842079353185133891, guid: ca693fca6a1a6fe4bae9b003cd612e1d, type: 3}
-  maxWebLength: 3
+  maxWebLength: 1.5
   webThickness: 0.5
-  maxWebsAllowed: 3
+  maxWebsAllowed: 2
 --- !u!4 &951635732
 Transform:
   m_ObjectHideFlags: 0
@@ -1222,14 +1175,14 @@ RectTransform:
   m_GameObject: {fileID: 1615252784}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1813, y: 1.175, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 300650372}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 14, y: -38}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1615252786
@@ -1300,6 +1253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentTool: 0
+  scoreValue: 10
 --- !u!4 &1742876254
 Transform:
   m_ObjectHideFlags: 0
@@ -1433,7 +1387,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: spawnRate
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: bugPrefabs.Array.size
@@ -1461,7 +1415,6 @@ SceneRoots:
   - {fileID: 300650372}
   - {fileID: 1263631935}
   - {fileID: 2005794527}
-  - {fileID: 260297459}
   - {fileID: 951635732}
   - {fileID: 1742876254}
   - {fileID: 625222730}
