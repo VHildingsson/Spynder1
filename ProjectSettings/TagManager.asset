@@ -62,3 +62,36 @@ TagManager:
   - name: Foreground
     uniqueID: 1139584739
     locked: 0
+  - name: UI
+    uniqueID: 510167019
+    locked: 0
+  - name: UI2
+    uniqueID: 2632837135
+    locked: 0
+  - name: CountArm
+    uniqueID: 3585269687
+    locked: 0
+  - name: CountdownBG
+    uniqueID: 3907433987
+    locked: 0
+  - name: 3
+    uniqueID: 2885738669
+    locked: 0
+  - name: 2
+    uniqueID: 22573395
+    locked: 0
+  - name: 1
+    uniqueID: 1293048295
+    locked: 0
+  - name: GO
+    uniqueID: 1594720315
+    locked: 0
+  - name: Load1
+    uniqueID: 1855093923
+    locked: 0
+  - name: Load2
+    uniqueID: 46333739
+    locked: 0
+  - name: Load3
+    uniqueID: 2328397545
+    locked: 0

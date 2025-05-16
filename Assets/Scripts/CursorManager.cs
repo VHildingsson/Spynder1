@@ -30,7 +30,7 @@ public class CursorManager : MonoBehaviour
     private void Start()
     {
         Cursor.visible = false;
-        currentCursorPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        currentCursorPosition = new Vector2(Screen.width / 3f, Screen.height / 6f);
         gamepad = Gamepad.current;
         UpdateCursor(ToolManager.Instance.currentTool);
     }
