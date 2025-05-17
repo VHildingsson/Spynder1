@@ -21,8 +21,6 @@ public class ToolManager : MonoBehaviour
     private const float webHoldThreshold = 0.3f;
     private bool isInMenuScene;
 
-    private bool buttonPressedThisFrame = false;
-
 
     private void Awake()
     {

@@ -319,13 +319,15 @@ GameObject:
   m_Component:
   - component: {fileID: 34537712261734276}
   - component: {fileID: 8665007669873387937}
+  - component: {fileID: -8794341905277256937}
+  - component: {fileID: 8912528789869149686}
+  - component: {fileID: -2899764095509308130}
   - component: {fileID: 6874489182401751082}
-  - component: {fileID: 8770887049503392634}
   - component: {fileID: -4261162409183568355}
   - component: {fileID: 3155568082568778285}
   m_Layer: 0
   m_Name: GoldenFly
-  m_TagString: Bug
+  m_TagString: GoldenFly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -401,6 +403,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-8794341905277256937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165414124601313328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eb630e35ab9ad64f89a413e451b9691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 3
+  direction: {x: 0, y: 0}
+  flyType: 0
+  reactionTime: 0
+  speedBoost: 0.5
+  evasionBoost: 2
+  spawnChance: 80
+--- !u!114 &8912528789869149686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165414124601313328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a339c3c324c1484b8fa06ed95c7c678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 2
+--- !u!114 &-2899764095509308130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165414124601313328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82caf2518ffbfa0418d4f4f185144244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goldenFlyValue: 30
 --- !u!95 &6874489182401751082
 Animator:
   serializedVersion: 5
@@ -422,20 +469,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8770887049503392634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5165414124601313328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19a3f5082fdedbb4cbefbca437e6b8db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 3
-  flyType: 0
 --- !u!50 &-4261162409183568355
 Rigidbody2D:
   serializedVersion: 4

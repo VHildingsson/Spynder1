@@ -8,7 +8,7 @@ public class WebCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Bug")) // Ensure the colliding object is a bug
+        if (other.CompareTag("Bug") || other.CompareTag("GoldenFly")) // Ensure the colliding object is a bug
         {
             // Get bug position before destroying it
             Vector3 bugPosition = other.transform.position;

@@ -3,13 +3,13 @@ using UnityEngine;
 public class BugMovement : MonoBehaviour
 {
     public float speed = 3f;
-    private Vector2 direction;
+    public Vector2 direction;
     public enum FlyType { Dumb, Slow, Smart }
     public FlyType flyType; // AI type of this fly
 
-    private float reactionTime; // Reaction delay
+    public float reactionTime; // Reaction delay
 
-    void Start()
+    protected virtual void Start()
     {
         direction = Random.insideUnitCircle.normalized;
         RotateBug();
@@ -36,7 +36,7 @@ public class BugMovement : MonoBehaviour
         }
     }
 
-    public void EvadeWeb()
+    public virtual void EvadeWeb()
     {
         if (flyType == FlyType.Dumb) return; // Dumb flies ignore webs
 
@@ -58,7 +58,7 @@ public class BugMovement : MonoBehaviour
         Debug.Log($"? {flyType} Fly is avoiding the web!");
     }
 
-    void RotateBug()
+    public void RotateBug()
     {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle - 90f);

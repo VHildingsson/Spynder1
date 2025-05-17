@@ -1,49 +1,127 @@
 using UnityEngine;
+using System.Collections;
+
+[System.Serializable]
+public class DifficultyStage
+{
+    public int scoreThreshold;
+    public float spawnRate;
+}
 
 public class BugSpawner : MonoBehaviour
 {
-    public GameObject[] bugPrefabs; // Array of bug prefabs
-    public float spawnRate = 2f; // Time between spawns
-    public AudioClip spawnSound; // Sound to play when spawning a bug
+    public GameObject[] bugPrefabs;
+    public AudioClip spawnSound;
     private AudioSource audioSource;
+
+    [Header("Difficulty Settings")]
+    public float minSpawnRate = 0.5f; // Fastest spawn rate (hardest)
+    public float maxSpawnRate = 3f;   // Slowest spawn rate (easiest)
+    public DifficultyStage[] difficultyStages = new DifficultyStage[10]; // 10 customizable stages
+
+    [Header("Golden Fly Settings")]
+    public GameObject goldenFlyPrefab; // Drag your golden fly prefab here
+    public float goldenFlyChance = 0.05f; // 5% chance to spawn golden fly
+
+    private float currentSpawnRate;
+    private Coroutine spawningCoroutine;
+
+    private int totalSpawns;
+    private int goldenSpawns;
 
     void Start()
     {
-        // Get or add AudioSource component
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        InvokeRepeating("SpawnBug", 1f, spawnRate);
+        // Initialize with easiest difficulty
+        currentSpawnRate = maxSpawnRate;
+        StartSpawning();
+
+        // Subscribe to score changes
+        ScoreManager.Instance.OnScoreChanged += UpdateDifficulty;
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe when destroyed
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.OnScoreChanged -= UpdateDifficulty;
+        }
+    }
+
+    void StartSpawning()
+    {
+        if (spawningCoroutine != null)
+        {
+            StopCoroutine(spawningCoroutine);
+        }
+        spawningCoroutine = StartCoroutine(SpawnBugs());
+    }
+
+    IEnumerator SpawnBugs()
+    {
+        yield return new WaitForSeconds(1f); // Initial delay
+
+        while (true)
+        {
+            SpawnBug();
+            yield return new WaitForSeconds(currentSpawnRate);
+        }
     }
 
     void SpawnBug()
     {
-        if (bugPrefabs.Length == 0)
-        {
-            Debug.LogError("No Bug Prefabs assigned! Assign at least one bug prefab in the Inspector.");
-            return;
-        }
+        totalSpawns++;
 
-        // Play spawn sound if available
+        if (bugPrefabs.Length == 0) return;
+
+        // Play sound
         if (spawnSound != null)
         {
             audioSource.pitch = Random.Range(0.7f, 1.1f);
             audioSource.PlayOneShot(spawnSound);
         }
 
-        // Select a random bug prefab
-        GameObject bugPrefab = bugPrefabs[Random.Range(0, bugPrefabs.Length)];
+        // Determine which prefab to spawn
+        GameObject bugPrefab;
+        float roll = Random.Range(0f, 100f);
 
-        // Spawn the bug at the spawner's position
+        if (roll < goldenFlyChance && goldenFlyPrefab != null)
+        {
+            bugPrefab = goldenFlyPrefab;
+            goldenSpawns++;
+            Debug.Log($"GOLDEN! (Rolled {roll} < {goldenFlyChance})");
+        }
+        else
+        {
+            bugPrefab = bugPrefabs[Random.Range(0, bugPrefabs.Length)];
+            Debug.Log($"Normal (Rolled {roll} >= {goldenFlyChance})");
+        }
+
+        // Instantiate
         GameObject newBug = Instantiate(bugPrefab, transform.position, Quaternion.identity);
-
-        // Ensure the scale matches the prefab
         newBug.transform.localScale = bugPrefab.transform.localScale;
+    }
 
-        Debug.Log($"Spawned {newBug.name} at {transform.position} with scale {newBug.transform.localScale}");
+    void UpdateDifficulty(int currentScore)
+    {
+        // Find the highest threshold we've passed
+        float targetRate = maxSpawnRate;
+        foreach (var stage in difficultyStages)
+        {
+            if (currentScore >= stage.scoreThreshold)
+            {
+                targetRate = Mathf.Min(stage.spawnRate, targetRate);
+            }
+        }
+
+        // Ensure we don't go below minimum
+        currentSpawnRate = Mathf.Max(targetRate, minSpawnRate);
     }
 }
 

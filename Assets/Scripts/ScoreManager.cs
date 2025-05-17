@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI livesText; // New UI for lives
     private int score = 0;
     private int lives = 3;
+
+    public event Action<int> OnScoreChanged;
 
     void Awake()
     {
@@ -27,10 +30,11 @@ public class ScoreManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void AddScore(int value)
+    public void AddScore(int value, bool isGolden = false)
     {
-        score += value;
+        score += isGolden ? value * 3 : value; // 3x points for golden flies
         UpdateUI();
+        OnScoreChanged?.Invoke(score);
     }
 
     public void BugEscaped()

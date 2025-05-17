@@ -8,6 +8,7 @@ TagManager:
   - Web
   - WebbedInsect
   - UIButton
+  - GoldenFly
   layers:
   - Default
   - TransparentFX
@@ -95,4 +96,28 @@ TagManager:
     locked: 0
   - name: Load3
     uniqueID: 2328397545
+    locked: 0
+  - name: MothBWL
+    uniqueID: 3578748007
+    locked: 0
+  - name: MothBWR
+    uniqueID: 1014868761
+    locked: 0
+  - name: MothTWR
+    uniqueID: 4107239939
+    locked: 0
+  - name: MothTWL
+    uniqueID: 2462789233
+    locked: 0
+  - name: MeneBWL
+    uniqueID: 2923298111
+    locked: 0
+  - name: MeneBWR
+    uniqueID: 2436431839
+    locked: 0
+  - name: MeneTWL
+    uniqueID: 554131927
+    locked: 0
+  - name: MeneTWR
+    uniqueID: 2030008749
     locked: 0
