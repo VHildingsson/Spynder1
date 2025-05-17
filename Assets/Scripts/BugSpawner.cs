@@ -4,9 +4,18 @@ public class BugSpawner : MonoBehaviour
 {
     public GameObject[] bugPrefabs; // Array of bug prefabs
     public float spawnRate = 2f; // Time between spawns
+    public AudioClip spawnSound; // Sound to play when spawning a bug
+    private AudioSource audioSource;
 
     void Start()
     {
+        // Get or add AudioSource component
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
         InvokeRepeating("SpawnBug", 1f, spawnRate);
     }
 
@@ -16,6 +25,13 @@ public class BugSpawner : MonoBehaviour
         {
             Debug.LogError("No Bug Prefabs assigned! Assign at least one bug prefab in the Inspector.");
             return;
+        }
+
+        // Play spawn sound if available
+        if (spawnSound != null)
+        {
+            audioSource.pitch = Random.Range(0.7f, 1.1f);
+            audioSource.PlayOneShot(spawnSound);
         }
 
         // Select a random bug prefab

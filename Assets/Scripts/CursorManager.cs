@@ -1,6 +1,8 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CursorManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class CursorManager : MonoBehaviour
 
     private Vector2 currentCursorPosition;
     private Gamepad gamepad;
+    private bool isInMenuScene;
 
     private void Awake()
     {
@@ -32,7 +35,40 @@ public class CursorManager : MonoBehaviour
         Cursor.visible = false;
         currentCursorPosition = new Vector2(Screen.width / 3f, Screen.height / 6f);
         gamepad = Gamepad.current;
-        UpdateCursor(ToolManager.Instance.currentTool);
+        CheckScene();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CheckScene();
+    }
+
+    private void CheckScene()
+    {
+        isInMenuScene = SceneManager.GetActiveScene().name == "MenuScene";
+        if (isInMenuScene)
+        {
+            ForceSpiderTool();
+        }
+    }
+
+    private void ForceSpiderTool()
+    {
+        if (ToolManager.Instance != null)
+        {
+            ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
+            UpdateCursor(ToolManager.ToolMode.SpiderTool);
+        }
     }
 
     private void Update()
@@ -71,6 +107,13 @@ public class CursorManager : MonoBehaviour
     public void UpdateCursor(ToolManager.ToolMode toolMode)
     {
         if (cursorImage == null) return;
+
+        // Always use spider cursor in menu scene
+        if (isInMenuScene)
+        {
+            cursorImage.sprite = spiderToolCursor;
+            return;
+        }
 
         cursorImage.sprite = toolMode switch
         {
