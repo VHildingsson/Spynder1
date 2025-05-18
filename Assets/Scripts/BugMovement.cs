@@ -24,14 +24,17 @@ public class BugMovement : MonoBehaviour
         reactionTime = (flyType == FlyType.Slow) ? Random.Range(0.5f, 1.2f) : 0.2f;
     }
 
-    void Update()
+    public virtual void Update()
     {
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
 
         // Destroy bug if it leaves the screen
         if (Mathf.Abs(transform.position.x) > 8 || Mathf.Abs(transform.position.y) > 5)
         {
-            ScoreManager.Instance.BugEscaped();
+            if (!gameObject.CompareTag("Menelaus"))
+            {
+                ScoreManager.Instance.BugEscaped();
+            }
             Destroy(gameObject);
         }
     }

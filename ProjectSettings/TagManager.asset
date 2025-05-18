@@ -9,6 +9,8 @@ TagManager:
   - WebbedInsect
   - UIButton
   - GoldenFly
+  - Moth
+  - Menelaus
   layers:
   - Default
   - TransparentFX

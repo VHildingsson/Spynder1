@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 5785508156487869345}
   - component: {fileID: -1215500826267758081}
   - component: {fileID: 4630225051730760431}
+  - component: {fileID: 4802543575422668904}
   - component: {fileID: -7740560440832522992}
   - component: {fileID: -1176461990250862916}
   m_Layer: 0
@@ -228,9 +229,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a21a49a56e6ebbe4ea7becbe9754ce9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreValue: 1
   despawnTime: 3
+  breakAnimationDuration: 0.6
   animator: {fileID: -7740560440832522992}
+  breakParticles: {fileID: 0}
+--- !u!114 &4802543575422668904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2996989131785402172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 590f116a778bb534687fcbaad8fa882e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bugType: 0
+  mothSelfDestructTime: 3
 --- !u!95 &-7740560440832522992
 Animator:
   serializedVersion: 5

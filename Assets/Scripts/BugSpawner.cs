@@ -19,9 +19,14 @@ public class BugSpawner : MonoBehaviour
     public float maxSpawnRate = 3f;   // Slowest spawn rate (easiest)
     public DifficultyStage[] difficultyStages = new DifficultyStage[10]; // 10 customizable stages
 
-    [Header("Golden Fly Settings")]
-    public GameObject goldenFlyPrefab; // Drag your golden fly prefab here
-    public float goldenFlyChance = 0.05f; // 5% chance to spawn golden fly
+    [Header("Special Insects")]
+    public GameObject goldenFlyPrefab;
+    public GameObject mothPrefab;
+    public GameObject menelausPrefab;
+
+    [Range(0, 100)] public float goldenFlyChance = 5f;
+    [Range(0, 100)] public float mothChance = 3f;
+    [Range(0, 100)] public float menelausChance = 2f;
 
     private float currentSpawnRate;
     private Coroutine spawningCoroutine;
@@ -88,19 +93,27 @@ public class BugSpawner : MonoBehaviour
         }
 
         // Determine which prefab to spawn
-        GameObject bugPrefab;
         float roll = Random.Range(0f, 100f);
+        GameObject bugPrefab;
 
         if (roll < goldenFlyChance && goldenFlyPrefab != null)
         {
             bugPrefab = goldenFlyPrefab;
-            goldenSpawns++;
-            Debug.Log($"GOLDEN! (Rolled {roll} < {goldenFlyChance})");
+            Debug.Log("Spawned Golden Fly");
+        }
+        else if (roll < goldenFlyChance + mothChance && mothPrefab != null)
+        {
+            bugPrefab = mothPrefab;
+            Debug.Log("Spawned Moth");
+        }
+        else if (roll < goldenFlyChance + mothChance + menelausChance && menelausPrefab != null)
+        {
+            bugPrefab = menelausPrefab;
+            Debug.Log("Spawned Menelaus");
         }
         else
         {
             bugPrefab = bugPrefabs[Random.Range(0, bugPrefabs.Length)];
-            Debug.Log($"Normal (Rolled {roll} >= {goldenFlyChance})");
         }
 
         // Instantiate

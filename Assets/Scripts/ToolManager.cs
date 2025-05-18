@@ -14,7 +14,7 @@ public class ToolManager : MonoBehaviour
     public int scoreValue = 10;
     public AudioClip toolSwitchSound;
     public AudioClip[] spiderEatSounds;
-    private AudioSource audioSource;
+    public AudioSource audioSource;
 
     private bool isHoldingForWeb = false;
     private float webHoldStartTime = 0f;
@@ -101,7 +101,6 @@ public class ToolManager : MonoBehaviour
                     {
                         if (!isInMenuScene && ScoreManager.Instance != null)
                         {
-                            ScoreManager.Instance.AddScore(scoreValue);
 
                             if (spiderEatSounds != null && spiderEatSounds.Length > 0)
                             {
@@ -125,8 +124,14 @@ public class ToolManager : MonoBehaviour
                                 }
                             }
                         }
-                        else
+                        if (hit.CompareTag("WebbedInsect"))
                         {
+                            var effects = hit.GetComponent<CaughtBugEffects>();
+                            if (effects != null)
+                            {
+                                effects.ApplyEffects();
+                                Debug.Log($"Controller: Applied effects for {effects.bugType}");
+                            }
                             Destroy(hit.gameObject);
                         }
                     }

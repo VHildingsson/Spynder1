@@ -1,56 +1,60 @@
 using UnityEngine;
-
+using System.Collections;
 public class CaughtBug : MonoBehaviour
 {
-    public int scoreValue = 10; // Points per caught bug
-    public float despawnTime = 5f; // Time before the breaking animation starts
-    public Animator animator; // Reference to Animator component
+    [Header("Timing Settings")]
+    public float defaultDespawnTime = 5f;
+    public float breakAnimationDuration = 0.5f;
 
-    private bool isBreaking = false; // Track if the bug is breaking
+    [Header("References")]
+    public Animator animator;
+    public ParticleSystem breakParticles;
+
+    private bool isBreaking = false;
 
     private void Start()
     {
-        // Start despawn timer
-        Invoke("StartBreakingAnimation", despawnTime);
+        Invoke("StartBreakingSequence", defaultDespawnTime);
     }
 
     private void OnMouseDown()
     {
-        // Only allow interaction if it's not breaking and Pickup Tool is active
-        if (isBreaking || ToolManager.Instance.currentTool != ToolManager.ToolMode.SpiderTool)
-        {
+        if (isBreaking) return;
+        if (ToolManager.Instance?.currentTool != ToolManager.ToolMode.SpiderTool)
             return;
-        }
 
-        if (ScoreManager.Instance != null)
+        var effects = GetComponent<CaughtBugEffects>();
+        if (effects != null)
         {
-            ScoreManager.Instance.AddScore(scoreValue);
+            effects.ApplyEffects(); // Make sure this runs
+            Debug.Log("Effects applied for: " + effects.bugType);
         }
 
-        // Destroy immediately upon clicking
+        // Play sound and destroy
+        if (ToolManager.Instance.spiderEatSounds.Length > 0)
+        {
+            int randomIndex = Random.Range(0, ToolManager.Instance.spiderEatSounds.Length);
+            ToolManager.Instance.audioSource.PlayOneShot(ToolManager.Instance.spiderEatSounds[randomIndex]);
+        }
+
+        Destroy(gameObject); // Destroy after applying effects
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
 
-    private void StartBreakingAnimation()
+    public void StartBreakingSequence()
     {
-        isBreaking = true; // Prevent further interaction
+        if (isBreaking) return;
+        isBreaking = true;
 
-        if (animator != null)
-        {
-            animator.SetTrigger("Break"); // Trigger breaking animation
-        }
+        animator?.SetTrigger("Break");
+        var collider = GetComponent<Collider2D>();
+        if (collider != null) collider.enabled = false;
 
-        // Destroy bug after the animation plays (adjust time if needed)
-        float animationDuration = animator.GetCurrentAnimatorStateInfo(0).length;
-        Invoke("Despawn", animationDuration);
-    }
-
-    private void Despawn()
-    {
-        Destroy(gameObject); // Remove bug after animation
+        Destroy(gameObject, breakAnimationDuration);
     }
 }
-
-
-
-

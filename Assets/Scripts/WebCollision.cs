@@ -1,4 +1,5 @@
 using UnityEngine;
+using static CaughtBugEffects;
 
 public class WebCollision : MonoBehaviour
 {
@@ -8,16 +9,19 @@ public class WebCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Bug") || other.CompareTag("GoldenFly")) // Ensure the colliding object is a bug
+        if (other.CompareTag("Bug") || other.CompareTag("GoldenFly") || other.CompareTag("Moth") || other.CompareTag("Menelaus")) // Ensure the colliding object is a bug
         {
-            // Get bug position before destroying it
-            Vector3 bugPosition = other.transform.position;
+            // Get bug type before destroying
+            BugType type = BugType.Normal;
+            if (other.CompareTag("GoldenFly")) type = BugType.Golden;
+            else if (other.CompareTag("Moth")) type = BugType.Moth;
+            else if (other.CompareTag("Menelaus")) type = BugType.Menelaus;
 
-            // Destroy the bug
+            Vector3 position = other.transform.position;
             Destroy(other.gameObject);
 
-            // Spawn the caught bug at the same position
-            Instantiate(bugCaughtPrefab, bugPosition, Quaternion.identity);
+            GameObject caughtBug = Instantiate(bugCaughtPrefab, position, Quaternion.identity);
+            caughtBug.GetComponent<CaughtBugEffects>().bugType = type;
 
             // Ensure WebDrawing properly removes this web and its markers
             if (WebDrawing.Instance != null)

@@ -417,11 +417,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   direction: {x: 0, y: 0}
-  flyType: 0
+  flyType: 2
   reactionTime: 0
-  speedBoost: 0.5
+  speedBoost: 1.4
   evasionBoost: 2
-  spawnChance: 80
 --- !u!114 &8912528789869149686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,7 +433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a339c3c324c1484b8fa06ed95c7c678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 2
+  detectionRange: 4
 --- !u!114 &-2899764095509308130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82caf2518ffbfa0418d4f4f185144244, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goldenFlyValue: 30
+  goldenFlyValue: 50
 --- !u!95 &6874489182401751082
 Animator:
   serializedVersion: 5
