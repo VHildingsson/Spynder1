@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2030008749
-  m_SortingLayer: 25
+  m_SortingLayer: 22
   m_SortingOrder: 0
   m_Sprite: {fileID: 1288042082, guid: d0de42f05bd3acf489cbb7548c79f111, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -155,7 +155,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 554131927
-  m_SortingLayer: 24
+  m_SortingLayer: 21
   m_SortingOrder: 0
   m_Sprite: {fileID: -941555857, guid: d0de42f05bd3acf489cbb7548c79f111, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -239,7 +239,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1371669185
-  m_SortingLayer: 22
+  m_SortingLayer: 19
   m_SortingOrder: 0
   m_Sprite: {fileID: -1945313880, guid: d0de42f05bd3acf489cbb7548c79f111, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -323,7 +323,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1858535457
-  m_SortingLayer: 23
+  m_SortingLayer: 20
   m_SortingOrder: 0
   m_Sprite: {fileID: -1579605942, guid: d0de42f05bd3acf489cbb7548c79f111, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -392,7 +392,7 @@ MonoBehaviour:
   flyType: 2
   reactionTime: 0
   smoothDirectionChange: 2
-  flutterIntensity: 3
+  flutterIntensity: 2
   flutterSpeed: 5
 --- !u!50 &1945558707200938579
 Rigidbody2D:
