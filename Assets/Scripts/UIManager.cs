@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour
     public Button playAgainButton;
     public Button closeQuestionButton;
 
+    [Header("High Score Input")]
+    public HighScoreInputPanel highScoreInputPanel;
+
     [Header("Animators")]
     public Animator gameOverPanelAnimator;
     public Animator questionPanelAnimator;
@@ -39,6 +42,11 @@ public class UIManager : MonoBehaviour
         questionButton.onClick.AddListener(ShowQuestionPanel);
         backToMenuButton.onClick.AddListener(OnBackToMenuClicked);
         closeQuestionButton.onClick.AddListener(HideQuestionPanel);
+    }
+
+    public void ShowHighScoreInput(int score)
+    {
+        highScoreInputPanel.Show(score);
     }
 
     private void OnBackToMenuClicked()

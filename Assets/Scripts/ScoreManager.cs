@@ -5,12 +5,27 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Linq;
 
 public class ScoreManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class HighScoreEntry
+    {
+        public string initials;
+        public int score;
+
+        public HighScoreEntry(string initials, int score)
+        {
+            this.initials = initials;
+            this.score = score;
+        }
+    }
+
     public static ScoreManager Instance;
 
-    private const string HIGH_SCORE_KEY = "HighScore";
+    private const string HIGH_SCORES_KEY = "HighScores";
+    private List<HighScoreEntry> highScores = new List<HighScoreEntry>();
 
     [Header("UI References")]
     public TextMeshProUGUI scoreText;
@@ -65,21 +80,50 @@ public class ScoreManager : MonoBehaviour
 
     private void Start()
     {
-        LoadHighScore(); // Load the high score when the game starts
+        LoadHighScores(); // Changed from LoadHighScore
         InitializeHearts();
         gameOverPanel.SetActive(false);
         Time.timeScale = 1f;
     }
 
-    private void LoadHighScore()
+    public List<HighScoreEntry> GetHighScores()
     {
-        HighScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+        return highScores.OrderByDescending(x => x.score).ToList();
     }
 
-    private void SaveHighScore()
+    private void LoadHighScores()
     {
-        PlayerPrefs.SetInt(HIGH_SCORE_KEY, HighScore);
-        PlayerPrefs.Save(); // Important to actually write to disk
+        string json = PlayerPrefs.GetString(HIGH_SCORES_KEY, "");
+        if (!string.IsNullOrEmpty(json))
+        {
+            HighScoreWrapper wrapper = JsonUtility.FromJson<HighScoreWrapper>(json);
+            highScores = wrapper.entries.OrderByDescending(x => x.score).ToList();
+        }
+        else
+        {
+            // Initialize with empty scores if none exist
+            highScores = new List<HighScoreEntry>
+        {
+            new HighScoreEntry("AAA", 1000),
+            new HighScoreEntry("BBB", 750),
+            new HighScoreEntry("CCC", 500)
+        };
+        }
+        HighScore = highScores[0].score; // Set current high score
+    }
+
+    private void SaveHighScores()
+    {
+        HighScoreWrapper wrapper = new HighScoreWrapper { entries = highScores };
+        string json = JsonUtility.ToJson(wrapper);
+        PlayerPrefs.SetString(HIGH_SCORES_KEY, json);
+        PlayerPrefs.Save();
+    }
+
+    [System.Serializable]
+    private class HighScoreWrapper
+    {
+        public List<HighScoreEntry> entries;
     }
 
     void Update()
@@ -181,15 +225,26 @@ public class ScoreManager : MonoBehaviour
         UIManager.Instance.ShowGameOverPanel();
         gameOverPanelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        // Calculate final score and check high score
         int finalScore = CalculateFinalScore();
-        if (finalScore > HighScore)
-        {
-            HighScore = finalScore;
-            SaveHighScore();
-        }
-
         ShowGameStats();
+
+        // Check if score qualifies for high scores
+        if (highScores.Count < 3 || finalScore > highScores[highScores.Count - 1].score)
+        {
+            UIManager.Instance.ShowHighScoreInput(finalScore);
+        }
+        else
+        {
+            OnGameOver?.Invoke();
+        }
+    }
+
+    public void AddHighScore(string initials, int score)
+    {
+        highScores.Add(new HighScoreEntry(initials, score));
+        highScores = highScores.OrderByDescending(x => x.score).Take(3).ToList();
+        SaveHighScores();
+        HighScore = highScores[0].score; // Update current high score
         OnGameOver?.Invoke();
     }
 

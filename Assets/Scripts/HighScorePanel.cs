@@ -2,11 +2,13 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
 
 public class HighScorePanel : MonoBehaviour
 {
     [Header("UI References")]
-    public TextMeshProUGUI highScoreText;
+    public TextMeshProUGUI[] highScoreTexts; // Array for top 3 scores
+    public TextMeshProUGUI[] initialsTexts;  // Array for top 3 initials
     public GameObject panel;
     public Button exitButton;
     public Animator panelAnimator;
@@ -17,35 +19,19 @@ public class HighScorePanel : MonoBehaviour
 
     private void Start()
     {
-        // Setup button listener
         exitButton.onClick.AddListener(HidePanel);
-
-        // Initially hide the panel
         panel.SetActive(false);
 
-        // Make sure animator uses unscaled time
         if (panelAnimator != null)
         {
             panelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
         }
     }
 
-    public void TogglePanel()
-    {
-        if (panel.activeSelf)
-        {
-            HidePanel();
-        }
-        else
-        {
-            ShowPanel();
-        }
-    }
-
     public void ShowPanel()
     {
         panel.SetActive(true);
-        LoadAndDisplayHighScore();
+        LoadAndDisplayHighScores();
 
         if (panelAnimator != null)
         {
@@ -58,8 +44,7 @@ public class HighScorePanel : MonoBehaviour
         if (panelAnimator != null)
         {
             panelAnimator.SetTrigger(hideTrigger);
-            // Disable panel after animation completes (handled by animation event or coroutine)
-            StartCoroutine(DisableAfterAnimation(hideTrigger));
+            StartCoroutine(DisableAfterAnimation());
         }
         else
         {
@@ -67,20 +52,39 @@ public class HighScorePanel : MonoBehaviour
         }
     }
 
-    private IEnumerator DisableAfterAnimation(string trigger)
+    private IEnumerator DisableAfterAnimation()
     {
-        // Wait for animation to start
-        yield return null;
+        // Get the length of the current animation
+        float animationLength = panelAnimator.GetCurrentAnimatorStateInfo(0).length;
 
-        // Wait for animation to complete
-        yield return new WaitForSecondsRealtime(panelAnimator.GetCurrentAnimatorStateInfo(0).length);
+        // Wait for the animation to complete
+        yield return new WaitForSecondsRealtime(animationLength);
 
         panel.SetActive(false);
     }
 
-    private void LoadAndDisplayHighScore()
+    private void LoadAndDisplayHighScores()
     {
-        int highScore = PlayerPrefs.GetInt("HighScore", 0);
-        highScoreText.text = $"HIGH SCORE: {highScore}";
+        if (ScoreManager.Instance == null)
+        {
+            Debug.LogError("ScoreManager instance not found!");
+            return;
+        }
+
+        var highScores = ScoreManager.Instance.GetHighScores();
+
+        // Display top 3 scores
+        for (int i = 0; i < Mathf.Min(3, highScores.Count); i++)
+        {
+            if (i < highScoreTexts.Length && highScoreTexts[i] != null)
+            {
+                highScoreTexts[i].text = highScores[i].score.ToString();
+            }
+
+            if (i < initialsTexts.Length && initialsTexts[i] != null)
+            {
+                initialsTexts[i].text = highScores[i].initials;
+            }
+        }
     }
 }
