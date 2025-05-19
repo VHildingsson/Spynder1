@@ -960,7 +960,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -265.7001, y: 227.20001}
+  m_AnchoredPosition: {x: -265.70013, y: 227.20001}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &401811106
@@ -4054,7 +4054,7 @@ MonoBehaviour:
   gameOverPanelAnimator: {fileID: 684156077}
   finalScoreText: {fileID: 1827027527}
   statsText: {fileID: 1045543099}
-  gameOverDelay: 1.5
+  gameOverDelay: 1
   lifeGainedSound: {fileID: 8300000, guid: 1cbc70e4cb711ad4f80ee4132ac432eb, type: 3}
   lifeLostSound: {fileID: 8300000, guid: 53adcccdc886ad645bdceabface848d6, type: 3}
   gameOverSound: {fileID: 8300000, guid: 53adcccdc886ad645bdceabface848d6, type: 3}
@@ -6580,35 +6580,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[1].spawnRate
-      value: 4.94
+      value: 4.56
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[2].spawnRate
-      value: 4.77
+      value: 4.11
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[3].spawnRate
-      value: 4.48
+      value: 3.67
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[4].spawnRate
-      value: 4.07
+      value: 3.22
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[5].spawnRate
-      value: 3.55
+      value: 2.78
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[6].spawnRate
-      value: 2.91
+      value: 2.33
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[7].spawnRate
-      value: 2.16
+      value: 1.89
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[8].spawnRate
-      value: 1.29
+      value: 1.44
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[9].spawnRate
@@ -6648,11 +6648,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[8].scoreThreshold
-      value: 850
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 6428684294364394277, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: difficultyStages.Array.data[9].scoreThreshold
-      value: 1000
+      value: 900
       objectReference: {fileID: 0}
     - target: {fileID: 6537472562856536481, guid: 399b5b74b97e4b34688dcba587a1cf07, type: 3}
       propertyPath: m_Name

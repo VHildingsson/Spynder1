@@ -2453,6 +2453,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 72d7266ae8ce7c34b86ad1ffeaf02b8a, type: 3}
   - {fileID: 8300000, guid: b9be3aa2de9d6e14a8b08a9f2a3643ad, type: 3}
   audioSource: {fileID: 0}
+  isGameOver: 0
 --- !u!4 &658420722
 Transform:
   m_ObjectHideFlags: 0
@@ -2598,6 +2599,8 @@ MonoBehaviour:
   webToolCursor: {fileID: -9250703, guid: 588fc5914df08b34da846eeba6398a32, type: 3}
   spiderToolCursor: {fileID: 1112669224, guid: cf0709c4987d6804d86ebb93b435ae97, type: 3}
   cursorSpeed: 900
+  menuCursorSprite: {fileID: 0}
+  menuCursorSpeedMultiplier: 1.5
 --- !u!4 &717463243
 Transform:
   m_ObjectHideFlags: 0
@@ -5007,7 +5010,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -167.99991, y: -131}
+  m_AnchoredPosition: {x: -167.99994, y: -131}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1366366734
@@ -6015,6 +6018,7 @@ MonoBehaviour:
   initialsInputField: {fileID: 861268492}
   submitButton: {fileID: 501621343}
   panelAnimator: {fileID: 1767093091}
+  uiManager: {fileID: 0}
   showTrigger: Show
   hideTrigger: Hide
 --- !u!222 &1767093095
