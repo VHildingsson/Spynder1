@@ -10,6 +10,8 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
+    private const string HIGH_SCORE_KEY = "HighScore";
+
     [Header("UI References")]
     public TextMeshProUGUI scoreText;
     public HeartUI[] heartContainers;
@@ -34,6 +36,7 @@ public class ScoreManager : MonoBehaviour
     public int menelausCaught { get; private set; }
     public int websPlaced { get; private set; }
     public float timePlayed { get; private set; }
+    public int HighScore { get; private set; }
     private int score = 0;
     public int currentLives = 3;
     private List<int> activeHeartIndices = new List<int>();
@@ -60,11 +63,23 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
+        LoadHighScore(); // Load the high score when the game starts
         InitializeHearts();
         gameOverPanel.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    private void LoadHighScore()
+    {
+        HighScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+    }
+
+    private void SaveHighScore()
+    {
+        PlayerPrefs.SetInt(HIGH_SCORE_KEY, HighScore);
+        PlayerPrefs.Save(); // Important to actually write to disk
     }
 
     void Update()
@@ -160,35 +175,43 @@ public class ScoreManager : MonoBehaviour
             audioSource.PlayOneShot(gameOverSound);
         }
 
-        // Wait for the delay before showing panel
-        yield return new WaitForSecondsRealtime(gameOverDelay); // Use WaitForSecondsRealtime
+        yield return new WaitForSecondsRealtime(gameOverDelay);
 
-        // Pause the game (except for UI elements)
         Time.timeScale = 0f;
-
-        // Show and animate the game over panel
         UIManager.Instance.ShowGameOverPanel();
         gameOverPanelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        // Calculate and display stats
-        ShowGameStats();
+        // Calculate final score and check high score
+        int finalScore = CalculateFinalScore();
+        if (finalScore > HighScore)
+        {
+            HighScore = finalScore;
+            SaveHighScore();
+        }
 
+        ShowGameStats();
         OnGameOver?.Invoke();
+    }
+
+    private int CalculateFinalScore()
+    {
+        int webPenalty = Mathf.Max(0, websPlaced - (normalBugsCaught + goldenBugsCaught + mothsCaught + menelausCaught)) * 10;
+        return Mathf.Max(0, score - webPenalty);
     }
 
     private void ShowGameStats()
     {
-        int webPenalty = Mathf.Max(0, websPlaced - (normalBugsCaught + goldenBugsCaught + mothsCaught + menelausCaught)) * 10;
-        int finalScore = Mathf.Max(0, score - webPenalty);
+        int finalScore = CalculateFinalScore();
 
         statsText.text =
-            $"Normal Bugs: {normalBugsCaught}\n" +
-            $"Golden Bugs: {goldenBugsCaught}\n" +
+            $"Time Played: {FormatTime(timePlayed)}\n" +
+            $"Flies: {normalBugsCaught}\n" +
+            $"Goldflies: {goldenBugsCaught}\n" +
             $"Moths: {mothsCaught}\n" +
             $"Menelaus: {menelausCaught}\n" +
             $"Webs Placed: {websPlaced}\n" +
-            $"Time Played: {FormatTime(timePlayed)}\n" +
-            $"Web Penalty: -{webPenalty}";
+            $"Web Penalty: -{Mathf.Max(0, websPlaced - (normalBugsCaught + goldenBugsCaught + mothsCaught + menelausCaught)) * 10}\n" +
+            $"High Score: {HighScore}"; // Add high score display
 
         finalScoreText.text = $"FINAL SCORE: {finalScore}";
     }
