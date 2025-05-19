@@ -89,8 +89,13 @@ public class ToolManager : MonoBehaviour
     {
         if (Gamepad.current == null) return;
 
-        // Handle tool switching (disabled during menu and game over)
-        if (!isGameOver && !isInMenuScene && Gamepad.current.buttonEast.wasPressedThisFrame)
+        // Get reference to initials input panel
+        bool isInputPanelActive = UIManager.Instance != null &&
+                                UIManager.Instance.initialsInputPanel != null &&
+                                UIManager.Instance.initialsInputPanel.activeSelf;
+
+        // Handle tool switching (disabled during menu, game over AND initials input)
+        if (!isGameOver && !isInMenuScene && !isInputPanelActive && Gamepad.current.buttonEast.wasPressedThisFrame)
         {
             ToggleTool();
         }

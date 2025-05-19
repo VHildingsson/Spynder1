@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -50,7 +51,11 @@ public class UIManager : MonoBehaviour
     }
     public void ShowInitialsInputOnly()
     {
-        gameOverPanel.SetActive(false); // Hide stats panel
+        // Force spider tool mode
+        ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
+        CursorManager.Instance?.UpdateCursor(ToolManager.ToolMode.SpiderTool);
+
+        gameOverPanel.SetActive(false);
         initialsInputPanel.SetActive(true);
         questionPanel.SetActive(false);
     }
@@ -99,6 +104,16 @@ public class UIManager : MonoBehaviour
         initialsInputPanel.SetActive(false);
         questionPanel.SetActive(false);
         gameOverPanelAnimator.SetTrigger("Show");
+    }
+
+    public void ShowGameOverPanelAfterDelay(float delay)
+    {
+        StartCoroutine(ShowGameOverPanelDelayed(delay));
+    }
+    private IEnumerator ShowGameOverPanelDelayed(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        ShowGameOverPanel();
     }
 
     public void ShowQuestionPanel()

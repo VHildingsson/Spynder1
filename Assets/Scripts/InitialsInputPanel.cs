@@ -19,6 +19,8 @@ public class InitialsInputPanel : MonoBehaviour
     private System.Action<string> onSubmitCallback;
     private bool isWaitingForInput = false;
 
+    private bool isSubmitting = false;
+
     private void Start()
     {
         submitButton.gameObject.tag = "UIButton";
@@ -30,12 +32,15 @@ public class InitialsInputPanel : MonoBehaviour
 
     public void ShowInputPanel(System.Action<string> callback)
     {
+        // Ensure spider tool mode is active
+        ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
+        CursorManager.Instance?.UpdateCursor(ToolManager.ToolMode.SpiderTool);
+
         onSubmitCallback = callback;
         gameObject.SetActive(true);
         initialsInputField.text = "";
         panelAnimator.SetTrigger(showTrigger);
 
-        // Select the input field after animation completes
         StartCoroutine(SelectInputFieldAfterAnimation());
     }
 
@@ -64,8 +69,12 @@ public class InitialsInputPanel : MonoBehaviour
 
     private void SubmitInitials()
     {
-        isWaitingForInput = false;
-        panelAnimator.SetTrigger(hideTrigger);
+        if (isSubmitting) return;
+        isSubmitting = true;
+
+        // Disable input during animation
+        initialsInputField.interactable = false;
+        submitButton.interactable = false;
 
         // Process input
         string processedInitials = initialsInputField.text.Trim().ToUpper();
@@ -74,14 +83,37 @@ public class InitialsInputPanel : MonoBehaviour
             processedInitials = processedInitials.Substring(0, 4);
         }
 
-        // Return cursor to game mode
-        CursorManager.Instance?.SetMenuMode(false);
+        // Trigger hide animation
+        panelAnimator.SetTrigger(hideTrigger);
 
-        // Show game over stats panel
-        uiManager.ShowGameOverPanel();
+        // Wait for animation to complete before invoking callback
+        StartCoroutine(CompleteSubmissionAfterAnimation(processedInitials));
+    }
+
+    private IEnumerator CompleteSubmissionAfterAnimation(string initials)
+    {
+        // Wait for animation to start
+        yield return null;
+
+        // Get animation length
+        float animLength = panelAnimator.GetCurrentAnimatorStateInfo(0).length;
+
+        // Wait for animation to complete
+        yield return new WaitForSecondsRealtime(animLength);
+
+        // Show game over panel after animation
+        uiManager.ShowGameOverPanelAfterDelay(0.1f);
 
         // Invoke callback
-        onSubmitCallback?.Invoke(processedInitials);
+        onSubmitCallback?.Invoke(initials);
+
+        // Reset and hide
+        isSubmitting = false;
+        gameObject.SetActive(false);
+
+        // Re-enable components for next use
+        initialsInputField.interactable = true;
+        submitButton.interactable = true;
     }
 
     private IEnumerator DisableAfterAnimation(string trigger)
