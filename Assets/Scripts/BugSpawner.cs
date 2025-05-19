@@ -14,9 +14,13 @@ public class BugSpawner : MonoBehaviour
     public AudioClip spawnSound;
     private AudioSource audioSource;
 
-    [Header("Difficulty Settings")]
+    [Header("Spawn Timing")]
+    [Tooltip("Delay before spawning starts (in seconds)")]
+    public float initialSpawnDelay = 3f; // New adjustable delay field
     public float minSpawnRate = 0.5f; // Fastest spawn rate (hardest)
     public float maxSpawnRate = 3f;   // Slowest spawn rate (easiest)
+
+    [Header("Difficulty Settings")]
     public DifficultyStage[] difficultyStages = new DifficultyStage[10]; // 10 customizable stages
 
     [Header("Special Insects")]
@@ -70,7 +74,7 @@ public class BugSpawner : MonoBehaviour
 
     IEnumerator SpawnBugs()
     {
-        yield return new WaitForSeconds(1f); // Initial delay
+        yield return new WaitForSeconds(initialSpawnDelay); // Now using the configurable delay
 
         while (true)
         {

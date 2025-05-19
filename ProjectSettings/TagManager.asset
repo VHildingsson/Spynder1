@@ -90,15 +90,6 @@ TagManager:
   - name: GO
     uniqueID: 1594720315
     locked: 0
-  - name: Load1
-    uniqueID: 1855093923
-    locked: 0
-  - name: Load2
-    uniqueID: 46333739
-    locked: 0
-  - name: Load3
-    uniqueID: 2328397545
-    locked: 0
   - name: MothBWL
     uniqueID: 3578748007
     locked: 0
@@ -122,4 +113,19 @@ TagManager:
     locked: 0
   - name: MeneTWR
     uniqueID: 2030008749
+    locked: 0
+  - name: UI_Canvas
+    uniqueID: 1259666641
+    locked: 0
+  - name: Load1
+    uniqueID: 1855093923
+    locked: 0
+  - name: Load2
+    uniqueID: 46333739
+    locked: 0
+  - name: Load3
+    uniqueID: 2328397545
+    locked: 0
+  - name: ForestUI
+    uniqueID: 1629254239
     locked: 0

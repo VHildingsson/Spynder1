@@ -1,24 +1,21 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using UnityEngine.UI;
 
 public class TransitionManager : MonoBehaviour
 {
-    public static TransitionManager Instance;
+    public static TransitionManager Instance { get; private set; }
 
     [Header("Transition Settings")]
-    public Animator leafAnimator;
-    public float coverDuration = 1f;
-    public float uncoverDuration = 1f;
+    [SerializeField] private Animator transitionAnimator;
+    [SerializeField] private float transitionTime = 1f;
 
     [Header("Countdown Settings")]
-    public Animator countdownAnimator;
-    public float countdownStartDelay = 0.1f; // Very short delay after uncover starts
-    public Button playButton;
+    [SerializeField] private Animator countdownAnimator;
+    [SerializeField] private float countdownStartDelay = 0.5f; // Halfway through uncover
+    [SerializeField] private string countdownAnimationName = "Countdown";
 
-    public AudioClip leavesSound; // Sound to play when spawning a bug
-    private AudioSource audioSource;
+    private bool isGameFrozen = false;
 
     private void Awake()
     {
@@ -30,82 +27,111 @@ public class TransitionManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
 
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-
+    void Start()
+    {
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
-            StartCoroutine(GameEntrySequence());
+            FreezeGame();
+            PlayUncover();
         }
+    }
+
+    public void FreezeGame()
+    {
+        isGameFrozen = true;
+        Time.timeScale = 0f;
+    }
+
+    public void UnfreezeGame()
+    {
+        isGameFrozen = false;
+        Time.timeScale = 1f;
     }
 
     public void LoadGameScene()
     {
-        // Disable the play button when pressed
-        if (playButton != null)
-        {
-            playButton.interactable = false;
-        }
-
-        StartCoroutine(TransitionToGame());
+        StartCoroutine(StartTransition("GameScene"));
     }
 
-    IEnumerator TransitionToGame()
+    public IEnumerator TransitionToMenu()
     {
-        leafAnimator.SetTrigger("Cover");
-        if (leavesSound != null)
-        {
-            audioSource.PlayOneShot(leavesSound);
-        }
-        yield return new WaitForSeconds(coverDuration);
-
-        SceneManager.LoadScene("GameScene");
+        yield return StartCoroutine(StartTransition("MenuScene"));
     }
 
-    IEnumerator GameEntrySequence()
+    private IEnumerator StartTransition(string sceneName)
+    {
+        transitionAnimator.SetTrigger("Cover");
+        yield return new WaitForSecondsRealtime(transitionTime);
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public void PlayUncover()
+    {
+        StartCoroutine(UncoverRoutine());
+    }
+
+    private IEnumerator UncoverRoutine()
     {
         // Start uncover animation
-        leafAnimator.SetTrigger("Uncover");
+        transitionAnimator.SetTrigger("Uncover");
 
-        if (leavesSound != null)
-        {
-            audioSource.PlayOneShot(leavesSound);
-        }
+        // Wait for halfway point
+        yield return new WaitForSecondsRealtime(countdownStartDelay);
 
-        // Very short delay before countdown starts
-        yield return new WaitForSeconds(countdownStartDelay);
-
-        // Only proceed with countdown if countdownAnimator exists
+        // Start countdown animation
         if (countdownAnimator != null)
         {
-            // Start countdown animation while uncover is still playing
             countdownAnimator.SetTrigger("Start");
 
-            // Freeze game during transition
-            Time.timeScale = 0f;
-            leafAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
-            countdownAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
-
-            // Wait for countdown to complete
-            yield return new WaitForSecondsRealtime(
-                countdownAnimator.GetCurrentAnimatorStateInfo(0).length
-            );
+            // Wait for countdown animation to finish
+            yield return new WaitForSecondsRealtime(GetAnimationLength(countdownAnimator, countdownAnimationName));
         }
-
-        // Wait for uncover animation to complete
-        yield return new WaitForSecondsRealtime(uncoverDuration - countdownStartDelay);
+        else
+        {
+            // If no countdown animator, just wait remaining transition time
+            yield return new WaitForSecondsRealtime(transitionTime - countdownStartDelay);
+        }
 
         // Unfreeze game
-        Time.timeScale = 1f;
+        UnfreezeGame();
+    }
 
-        // Start game
-        if (GameManager.Instance != null)
+    private float GetAnimationLength(Animator animator, string animationName)
+    {
+        RuntimeAnimatorController ac = animator.runtimeAnimatorController;
+        foreach (AnimationClip clip in ac.animationClips)
         {
-            GameManager.Instance.StartGame();
+            if (clip.name == animationName)
+            {
+                return clip.length;
+            }
         }
+        return 0f;
+    }
+
+    public void LoadMenuScene()
+    {
+        StartCoroutine(StartTransition("MenuScene"));
+    }
+
+    public void RestartGame()
+    {
+        StartCoroutine(RestartGameRoutine());
+    }
+
+    private IEnumerator RestartGameRoutine()
+    {
+        // Play cover animation
+        transitionAnimator.SetTrigger("Cover");
+
+        // Wait for transition
+        yield return new WaitForSecondsRealtime(transitionTime);
+
+        // Reload the current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        // Note: The uncover animation will automatically play in Start()
     }
 }

@@ -19,7 +19,7 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI statsText;
 
     [Header("Game Over Settings")]
-    public float gameOverDelay = 1.5f;
+    public float gameOverDelay = 0.5f;
 
     [Header("Sound Effects")]
     public AudioClip lifeGainedSound;
@@ -167,8 +167,7 @@ public class ScoreManager : MonoBehaviour
         Time.timeScale = 0f;
 
         // Show and animate the game over panel
-        gameOverPanel.SetActive(true);
-        gameOverPanelAnimator.SetTrigger("Show");
+        UIManager.Instance.ShowGameOverPanel();
         gameOverPanelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
 
         // Calculate and display stats
@@ -217,12 +216,6 @@ public class ScoreManager : MonoBehaviour
                 menelausCaught++;
                 break;
         }
-    }
-
-    public void RestartGame()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void UpdateScoreUI()
