@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -11,6 +10,7 @@ public class ToolManager : MonoBehaviour
     public enum ToolMode { WebTool, SpiderTool }
     public ToolMode currentTool = ToolMode.WebTool;
 
+    [Header("Settings")]
     public int scoreValue = 10;
     public AudioClip toolSwitchSound;
     public AudioClip[] spiderEatSounds;
@@ -20,7 +20,7 @@ public class ToolManager : MonoBehaviour
     private float webHoldStartTime = 0f;
     private const float webHoldThreshold = 0.3f;
     private bool isInMenuScene;
-
+    private bool isGameOver = false;
 
     private void Awake()
     {
@@ -36,6 +36,21 @@ public class ToolManager : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
+
+        // Subscribe to game over event
+        ScoreManager.OnGameOver += HandleGameOver;
+    }
+
+    private void OnDestroy()
+    {
+        ScoreManager.OnGameOver -= HandleGameOver;
+    }
+
+    private void HandleGameOver()
+    {
+        isGameOver = true;
+        currentTool = ToolMode.SpiderTool; // Force spider tool mode
+        CursorManager.Instance?.UpdateCursor(currentTool);
     }
 
     private void Start()
@@ -64,10 +79,7 @@ public class ToolManager : MonoBehaviour
         if (isInMenuScene)
         {
             currentTool = ToolMode.SpiderTool;
-            if (CursorManager.Instance != null)
-            {
-                CursorManager.Instance.UpdateCursor(currentTool);
-            }
+            CursorManager.Instance?.UpdateCursor(currentTool);
         }
     }
 
@@ -75,70 +87,30 @@ public class ToolManager : MonoBehaviour
     {
         if (Gamepad.current == null) return;
 
-        if (!isInMenuScene && Gamepad.current.buttonEast.wasPressedThisFrame)
+        // Handle tool switching (disabled during game over)
+        if (!isGameOver && !isInMenuScene && Gamepad.current.buttonEast.wasPressedThisFrame)
         {
             ToggleTool();
         }
 
-        // Change from isPressed to wasPressedThisFrame
+        // Handle button presses
         if (Gamepad.current.buttonSouth.wasPressedThisFrame && !isHoldingForWeb)
         {
-            if (currentTool == ToolMode.WebTool && !isInMenuScene)
+            if (!isGameOver && !isInMenuScene && currentTool == ToolMode.WebTool)
             {
+                // Start web drawing
                 isHoldingForWeb = true;
                 webHoldStartTime = Time.time;
                 WebDrawing.Instance?.StartPotentialWeb();
             }
             else
             {
-                Vector3 worldPos = CursorManager.Instance.GetCursorWorldPosition();
-                worldPos.z = 0;
-
-                Collider2D[] hits = Physics2D.OverlapPointAll(worldPos);
-                foreach (var hit in hits)
-                {
-                    if (hit.CompareTag("WebbedInsect") || (isInMenuScene && hit.CompareTag("UIButton")))
-                    {
-                        if (!isInMenuScene && ScoreManager.Instance != null)
-                        {
-
-                            if (spiderEatSounds != null && spiderEatSounds.Length > 0)
-                            {
-                                int randomIndex = Random.Range(0, spiderEatSounds.Length);
-                                audioSource.pitch = Random.Range(0.9f, 1.1f);
-                                audioSource.PlayOneShot(spiderEatSounds[randomIndex]);
-                            }
-                        }
-
-                        if (hit.CompareTag("UIButton"))
-                        {
-                            var button = hit.GetComponent<Button>();
-                            if (button != null)
-                            {
-                                button.onClick.Invoke();
-                                // Play UI sound only once per button press
-                                if (isInMenuScene && toolSwitchSound != null)
-                                {
-                                    audioSource.pitch = Random.Range(0.9f, 1.1f);
-                                    audioSource.PlayOneShot(toolSwitchSound);
-                                }
-                            }
-                        }
-                        if (hit.CompareTag("WebbedInsect"))
-                        {
-                            var effects = hit.GetComponent<CaughtBugEffects>();
-                            if (effects != null)
-                            {
-                                effects.ApplyEffects();
-                                Debug.Log($"Controller: Applied effects for {effects.bugType}");
-                            }
-                            Destroy(hit.gameObject);
-                        }
-                    }
-                }
+                // Handle UI or insect interaction
+                HandleInteraction();
             }
         }
 
+        // Handle web release
         if (isHoldingForWeb && Gamepad.current.buttonSouth.wasReleasedThisFrame)
         {
             WebDrawing.Instance?.ReleaseWeb();
@@ -146,9 +118,52 @@ public class ToolManager : MonoBehaviour
         }
     }
 
-    void ToggleTool()
+    private void HandleInteraction()
     {
-        // Play sound before switching
+        Vector2 cursorPos = CursorManager.Instance.GetCursorScreenPosition();
+        var hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(cursorPos), Vector2.zero);
+
+        foreach (var hit in hits)
+        {
+            // Handle UI buttons first
+            if (hit.collider != null && hit.collider.CompareTag("UIButton"))
+            {
+                var button = hit.collider.GetComponent<Button>();
+                if (button != null)
+                {
+                    button.onClick.Invoke();
+                    if (toolSwitchSound != null)
+                    {
+                        audioSource.pitch = Random.Range(0.9f, 1.1f);
+                        audioSource.PlayOneShot(toolSwitchSound);
+                    }
+                    return; // Prioritize UI buttons
+                }
+            }
+
+            // Handle webbed insects (only if not game over and not in menu)
+            if (!isGameOver && !isInMenuScene && hit.collider != null && hit.collider.CompareTag("WebbedInsect"))
+            {
+                var effects = hit.collider.GetComponent<CaughtBugEffects>();
+                if (effects != null)
+                {
+                    effects.ApplyEffects();
+                }
+                Destroy(hit.collider.gameObject);
+
+                if (spiderEatSounds != null && spiderEatSounds.Length > 0)
+                {
+                    int randomIndex = Random.Range(0, spiderEatSounds.Length);
+                    audioSource.pitch = Random.Range(0.9f, 1.1f);
+                    audioSource.PlayOneShot(spiderEatSounds[randomIndex]);
+                }
+                return;
+            }
+        }
+    }
+
+    private void ToggleTool()
+    {
         if (toolSwitchSound != null)
         {
             audioSource.pitch = Random.Range(0.80f, 1.05f);

@@ -160,6 +160,7 @@ public class WebDrawing : MonoBehaviour
         }
 
         activeWebs.Add(currentWeb);
+        ScoreManager.Instance?.IncrementWebCount();
     }
 
     private void CleanUpCurrentWeb()

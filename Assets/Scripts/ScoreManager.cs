@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro;
 using System;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using System.Collections;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -9,19 +12,35 @@ public class ScoreManager : MonoBehaviour
 
     [Header("UI References")]
     public TextMeshProUGUI scoreText;
-    public HeartUI[] heartContainers; // Assign 3 heart UI elements in Inspector
-    public Animator livesPanelAnimator;
+    public HeartUI[] heartContainers;
+    public GameObject gameOverPanel;
+    public Animator gameOverPanelAnimator;
+    public TextMeshProUGUI finalScoreText;
+    public TextMeshProUGUI statsText;
+
+    [Header("Game Over Settings")]
+    public float gameOverDelay = 1.5f;
 
     [Header("Sound Effects")]
     public AudioClip lifeGainedSound;
     public AudioClip lifeLostSound;
+    public AudioClip gameOverSound;
     public AudioSource audioSource;
 
+    // Game statistics
+    public int normalBugsCaught { get; private set; }
+    public int goldenBugsCaught { get; private set; }
+    public int mothsCaught { get; private set; }
+    public int menelausCaught { get; private set; }
+    public int websPlaced { get; private set; }
+    public float timePlayed { get; private set; }
     private int score = 0;
     public int currentLives = 3;
     private List<int> activeHeartIndices = new List<int>();
+    private bool isGameOver = false;
 
     public event Action<int> OnScoreChanged;
+    public static event Action OnGameOver;
 
     void Awake()
     {
@@ -34,7 +53,6 @@ public class ScoreManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // Add audio source if not assigned
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -45,14 +63,21 @@ public class ScoreManager : MonoBehaviour
     void Start()
     {
         InitializeHearts();
+        gameOverPanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    void Update()
+    {
+        if (!isGameOver)
+        {
+            timePlayed += Time.deltaTime;
+        }
     }
 
     void InitializeHearts()
     {
-        // Clear any existing active hearts
         activeHeartIndices.Clear();
-
-        // Enable and animate in starting hearts
         for (int i = 0; i < currentLives; i++)
         {
             if (i < heartContainers.Length)
@@ -63,7 +88,6 @@ public class ScoreManager : MonoBehaviour
             }
         }
     }
-
 
     public void AddScore(int value, bool isGolden = false)
     {
@@ -77,14 +101,11 @@ public class ScoreManager : MonoBehaviour
         if (currentLives >= heartContainers.Length) return;
 
         currentLives++;
-
-        // Play life gained sound
         if (lifeGainedSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(lifeGainedSound);
         }
 
-        // Find first inactive heart
         for (int i = 0; i < heartContainers.Length; i++)
         {
             if (!activeHeartIndices.Contains(i))
@@ -98,17 +119,15 @@ public class ScoreManager : MonoBehaviour
 
     public void LoseLife()
     {
-        if (currentLives <= 0) return;
+        if (currentLives <= 0 || isGameOver) return;
 
         currentLives--;
 
-        // Play life lost sound
         if (lifeLostSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(lifeLostSound);
         }
 
-        // Visual feedback
         if (activeHeartIndices.Count > 0)
         {
             int lastIndex = activeHeartIndices[activeHeartIndices.Count - 1];
@@ -118,49 +137,97 @@ public class ScoreManager : MonoBehaviour
 
         if (currentLives <= 0)
         {
-            GameOver();
+            StartCoroutine(GameOverSequence());
         }
     }
 
     public void BugEscaped()
     {
-        if (currentLives <= 0) return;
+        LoseLife();
+    }
 
-        currentLives--;
+    public void IncrementWebCount()
+    {
+        websPlaced++;
+    }
 
-        // Play life lost sound for escaped bugs too
-        if (lifeLostSound != null && audioSource != null)
+    private IEnumerator GameOverSequence()
+    {
+        isGameOver = true;
+
+        if (gameOverSound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(lifeLostSound);
+            audioSource.PlayOneShot(gameOverSound);
         }
 
-        if (activeHeartIndices.Count > 0)
-        {
-            int lastIndex = activeHeartIndices[activeHeartIndices.Count - 1];
-            heartContainers[lastIndex].PlayLoseAnimation();
-            activeHeartIndices.RemoveAt(activeHeartIndices.Count - 1);
-        }
+        // Wait for the delay before showing panel
+        yield return new WaitForSecondsRealtime(gameOverDelay); // Use WaitForSecondsRealtime
 
-        if (currentLives <= 0)
+        // Pause the game (except for UI elements)
+        Time.timeScale = 0f;
+
+        // Show and animate the game over panel
+        gameOverPanel.SetActive(true);
+        gameOverPanelAnimator.SetTrigger("Show");
+        gameOverPanelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+
+        // Calculate and display stats
+        ShowGameStats();
+
+        OnGameOver?.Invoke();
+    }
+
+    private void ShowGameStats()
+    {
+        int webPenalty = Mathf.Max(0, websPlaced - (normalBugsCaught + goldenBugsCaught + mothsCaught + menelausCaught)) * 10;
+        int finalScore = Mathf.Max(0, score - webPenalty);
+
+        statsText.text =
+            $"Normal Bugs: {normalBugsCaught}\n" +
+            $"Golden Bugs: {goldenBugsCaught}\n" +
+            $"Moths: {mothsCaught}\n" +
+            $"Menelaus: {menelausCaught}\n" +
+            $"Webs Placed: {websPlaced}\n" +
+            $"Time Played: {FormatTime(timePlayed)}\n" +
+            $"Web Penalty: -{webPenalty}";
+
+        finalScoreText.text = $"FINAL SCORE: {finalScore}";
+    }
+
+    private string FormatTime(float seconds)
+    {
+        TimeSpan time = TimeSpan.FromSeconds(seconds);
+        return string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+    }
+
+    public void TrackBugCaught(CaughtBugEffects.BugType bugType)
+    {
+        switch (bugType)
         {
-            GameOver();
+            case CaughtBugEffects.BugType.Normal:
+                normalBugsCaught++;
+                break;
+            case CaughtBugEffects.BugType.Golden:
+                goldenBugsCaught++;
+                break;
+            case CaughtBugEffects.BugType.Moth:
+                mothsCaught++;
+                break;
+            case CaughtBugEffects.BugType.Menelaus:
+                menelausCaught++;
+                break;
         }
     }
 
-    void GameOver()
+    public void RestartGame()
     {
-        scoreText.text = "Game Over! Final Score: " + score;
-        livesPanelAnimator.SetTrigger("GameOver");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void UpdateScoreUI()
     {
         scoreText.text = "SCORE: " + score;
-    }
-
-    void UpdateLivesUI()
-    {
-        // Lives are now handled by animations
     }
 }
 

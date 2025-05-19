@@ -21,6 +21,8 @@ public class CaughtBugEffects : MonoBehaviour
 
     public void ApplyEffects()
     {
+        ScoreManager.Instance?.TrackBugCaught(bugType);
+
         Debug.Log($"Applying effects for {bugType}", this);
 
         if (ScoreManager.Instance == null)
