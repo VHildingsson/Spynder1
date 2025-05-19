@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject questionPanel;
 
+    [Header("High Score Input")]
+    public GameObject initialsInputPanel;
+
     [Header("Buttons")]
     public Button questionButton;
     public Button backToMenuButton;
@@ -44,6 +47,12 @@ public class UIManager : MonoBehaviour
     private void OnBackToMenuClicked()
     {
         StartReturnToMainMenu();
+    }
+    public void ShowInitialsInputOnly()
+    {
+        gameOverPanel.SetActive(false); // Hide stats panel
+        initialsInputPanel.SetActive(true);
+        questionPanel.SetActive(false);
     }
 
     private void OnPlayAgainClicked()
@@ -87,8 +96,9 @@ public class UIManager : MonoBehaviour
     public void ShowGameOverPanel()
     {
         gameOverPanel.SetActive(true);
-        gameOverPanelAnimator.SetTrigger("Show");
+        initialsInputPanel.SetActive(false);
         questionPanel.SetActive(false);
+        gameOverPanelAnimator.SetTrigger("Show");
     }
 
     public void ShowQuestionPanel()

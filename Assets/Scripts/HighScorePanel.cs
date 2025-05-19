@@ -84,6 +84,20 @@ public class HighScorePanel : MonoBehaviour
 
     private void LoadAndDisplayHighScore()
     {
+        // Check if ScoreManager exists
+        if (ScoreManager.Instance == null)
+        {
+            Debug.LogWarning("ScoreManager instance not found!");
+
+            // Display empty scores
+            for (int i = 0; i < 3; i++)
+            {
+                initialsTexts[i].text = "---";
+                scoreTexts[i].text = "0";
+            }
+            return;
+        }
+
         HighScoreData highScoreData = ScoreManager.Instance.GetHighScoreData();
 
         // Display all top scores

@@ -14,6 +14,12 @@ public class CursorManager : MonoBehaviour
     public Sprite spiderToolCursor;
     public float cursorSpeed = 500f;
 
+    [Header("Menu Settings")]
+    public Sprite menuCursorSprite;
+    public float menuCursorSpeedMultiplier = 1.5f;
+    private bool isInMenuMode = false;
+    private float originalCursorSpeed;
+
     private Vector2 currentCursorPosition;
     private Gamepad gamepad;
     private bool isInMenuScene;
@@ -32,10 +38,29 @@ public class CursorManager : MonoBehaviour
 
     private void Start()
     {
+        originalCursorSpeed = cursorSpeed;
         Cursor.visible = false;
         currentCursorPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
         gamepad = Gamepad.current;
         CheckScene();
+    }
+
+
+
+    public void SetMenuMode(bool menuMode)
+    {
+        if (menuMode)
+        {
+            // Optional: Change cursor appearance for menu input
+            cursorImage.sprite = spiderToolCursor; // Or create a special menu cursor
+            cursorSpeed *= 1.5f; // Faster movement for menu navigation
+        }
+        else
+        {
+            // Restore normal cursor
+            UpdateCursor(ToolManager.Instance.currentTool);
+            // Reset cursor speed to original value
+        }
     }
 
     private void Update()
@@ -50,8 +75,11 @@ public class CursorManager : MonoBehaviour
         Vector2 stickInput = gamepad.leftStick.ReadValue();
         if (stickInput.magnitude < 0.1f) stickInput = Vector2.zero;
 
+        // Apply speed multiplier in menu mode
+        float currentSpeed = isInMenuMode ? cursorSpeed : originalCursorSpeed;
+
         // Use unscaled time so cursor works during pause
-        currentCursorPosition += stickInput * cursorSpeed * Time.unscaledDeltaTime;
+        currentCursorPosition += stickInput * currentSpeed * Time.unscaledDeltaTime;
 
         // Clamp to screen
         currentCursorPosition.x = Mathf.Clamp(currentCursorPosition.x, 0, Screen.width);
@@ -81,11 +109,16 @@ public class CursorManager : MonoBehaviour
     private void CheckScene()
     {
         isInMenuScene = SceneManager.GetActiveScene().name == "MenuScene";
-        if (isInMenuScene)
+        if (isInMenuScene || ToolManager.Instance?.isGameOver == true)
         {
-            ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
-            UpdateCursor(ToolManager.ToolMode.SpiderTool);
+            ForceSpiderToolMode();
         }
+    }
+
+    public void ForceSpiderToolMode()
+    {
+        ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
+        UpdateCursor(ToolManager.ToolMode.SpiderTool);
     }
 
     private void OnEnable()

@@ -20,7 +20,9 @@ public class ToolManager : MonoBehaviour
     private float webHoldStartTime = 0f;
     private const float webHoldThreshold = 0.3f;
     private bool isInMenuScene;
-    private bool isGameOver = false;
+    public bool isGameOver = false;
+
+    public bool ShouldHandleUIInteractions => isInMenuScene || isGameOver;
 
     private void Awake()
     {
@@ -87,7 +89,7 @@ public class ToolManager : MonoBehaviour
     {
         if (Gamepad.current == null) return;
 
-        // Handle tool switching (disabled during game over)
+        // Handle tool switching (disabled during menu and game over)
         if (!isGameOver && !isInMenuScene && Gamepad.current.buttonEast.wasPressedThisFrame)
         {
             ToggleTool();
@@ -105,7 +107,7 @@ public class ToolManager : MonoBehaviour
             }
             else
             {
-                // Handle UI or insect interaction
+                // Handle UI interaction in both menu and game over states
                 HandleInteraction();
             }
         }
@@ -125,8 +127,8 @@ public class ToolManager : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            // Handle UI buttons first
-            if (hit.collider != null && hit.collider.CompareTag("UIButton"))
+            // Handle UI buttons in all cases (menu, game over, input panel)
+            if (hit.collider != null && (hit.collider.CompareTag("UIButton") || isInMenuScene || isGameOver))
             {
                 var button = hit.collider.GetComponent<Button>();
                 if (button != null)
@@ -137,12 +139,12 @@ public class ToolManager : MonoBehaviour
                         audioSource.pitch = Random.Range(0.9f, 1.1f);
                         audioSource.PlayOneShot(toolSwitchSound);
                     }
-                    return; // Prioritize UI buttons
+                    return;
                 }
             }
 
-            // Handle webbed insects (only if not game over and not in menu)
-            if (!isGameOver && !isInMenuScene && hit.collider != null && hit.collider.CompareTag("WebbedInsect"))
+            // Only handle webbed insects during normal gameplay
+            if (!ShouldHandleUIInteractions && hit.collider != null && hit.collider.CompareTag("WebbedInsect"))
             {
                 var effects = hit.collider.GetComponent<CaughtBugEffects>();
                 if (effects != null)

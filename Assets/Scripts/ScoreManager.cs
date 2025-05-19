@@ -49,8 +49,8 @@ public class ScoreManager : MonoBehaviour
 
     private const string HIGH_SCORE_DATA_KEY = "HighScoreData";
     private HighScoreData highScoreData;
-    [SerializeField] private TMP_InputField initialsInputField;
-    [SerializeField] private GameObject initialsInputPanel;
+    [Header("Initials Input")]
+    public InitialsInputPanel initialsInputPanel;
 
     [Header("UI References")]
     public TextMeshProUGUI scoreText;
@@ -226,24 +226,36 @@ public class ScoreManager : MonoBehaviour
             audioSource.PlayOneShot(gameOverSound);
         }
 
+        // Force spider tool mode IMMEDIATELY when game over starts
+        ToolManager.Instance.currentTool = ToolManager.ToolMode.SpiderTool;
+        CursorManager.Instance?.UpdateCursor(ToolManager.ToolMode.SpiderTool);
+
         yield return new WaitForSecondsRealtime(gameOverDelay);
 
         Time.timeScale = 0f;
-        UIManager.Instance.ShowGameOverPanel();
         gameOverPanelAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        // Calculate final score and check high score
         int finalScore = CalculateFinalScore();
+
+        if (highScoreData.IsHighScore(finalScore))
+        {
+            // Set menu mode for input panel
+            CursorManager.Instance?.SetMenuMode(true);
+            UIManager.Instance.ShowInitialsInputOnly();
+
+            yield return StartCoroutine(ShowInitialsInput(finalScore));
+
+            UIManager.Instance.ShowGameOverPanel();
+        }
+        else
+        {
+            UIManager.Instance.ShowGameOverPanel();
+        }
+
         if (finalScore > HighScore)
         {
             HighScore = finalScore;
             SaveHighScores();
-        }
-
-        // Check if score qualifies for leaderboard
-        if (highScoreData.IsHighScore(finalScore))
-        {
-            yield return StartCoroutine(ShowInitialsInput(finalScore));
         }
 
         ShowGameStats();
@@ -252,13 +264,11 @@ public class ScoreManager : MonoBehaviour
 
     private IEnumerator ShowInitialsInput(int finalScore)
     {
-        initialsInputPanel.SetActive(true);
-        initialsInputField.text = "";
-        initialsInputField.characterLimit = 4;
-
-        // Wait for player to enter initials
         bool inputCompleted = false;
-        initialsInputField.onEndEdit.AddListener((value) => {
+        string submittedInitials = "";
+
+        initialsInputPanel.ShowInputPanel((initials) => {
+            submittedInitials = initials;
             inputCompleted = true;
         });
 
@@ -267,13 +277,15 @@ public class ScoreManager : MonoBehaviour
             yield return null;
         }
 
-        // Add to leaderboard
-        highScoreData.AddScore(new ScoreEntry(initialsInputField.text.ToUpper(), finalScore));
-        SaveHighScores();
-
-        initialsInputPanel.SetActive(false);
+        // Add to leaderboard if not empty
+        if (!string.IsNullOrEmpty(submittedInitials))
+        {
+            highScoreData.AddScore(new ScoreEntry(submittedInitials, finalScore));
+            SaveHighScores();
+        }
     }
 
+    // Add this method to get the high scores for display
     public HighScoreData GetHighScoreData()
     {
         return highScoreData;
