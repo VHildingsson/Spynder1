@@ -6,11 +6,51 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using System.Collections;
 
+[System.Serializable]
+public class ScoreEntry
+{
+    public string initials;
+    public int score;
+
+    public ScoreEntry(string initials, int score)
+    {
+        this.initials = initials;
+        this.score = score;
+    }
+}
+
+[System.Serializable]
+public class HighScoreData
+{
+    public List<ScoreEntry> topScores = new List<ScoreEntry>();
+
+    public void AddScore(ScoreEntry newEntry)
+    {
+        topScores.Add(newEntry);
+        // Sort in descending order
+        topScores.Sort((a, b) => b.score.CompareTo(a.score));
+        // Keep only top 3
+        if (topScores.Count > 3)
+        {
+            topScores.RemoveAt(topScores.Count - 1);
+        }
+    }
+
+    public bool IsHighScore(int score)
+    {
+        if (topScores.Count < 3) return true;
+        return score > topScores[topScores.Count - 1].score;
+    }
+}
+
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
-    private const string HIGH_SCORE_KEY = "HighScore";
+    private const string HIGH_SCORE_DATA_KEY = "HighScoreData";
+    private HighScoreData highScoreData;
+    [SerializeField] private TMP_InputField initialsInputField;
+    [SerializeField] private GameObject initialsInputPanel;
 
     [Header("UI References")]
     public TextMeshProUGUI scoreText;
@@ -61,25 +101,36 @@ public class ScoreManager : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
         }
+
+        LoadHighScores();
     }
 
     private void Start()
     {
-        LoadHighScore(); // Load the high score when the game starts
+        LoadHighScores(); // Load the high score when the game starts
         InitializeHearts();
         gameOverPanel.SetActive(false);
         Time.timeScale = 1f;
     }
 
-    private void LoadHighScore()
+    private void LoadHighScores()
     {
-        HighScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+        string json = PlayerPrefs.GetString(HIGH_SCORE_DATA_KEY, "");
+        if (!string.IsNullOrEmpty(json))
+        {
+            highScoreData = JsonUtility.FromJson<HighScoreData>(json);
+        }
+        else
+        {
+            highScoreData = new HighScoreData();
+        }
     }
 
-    private void SaveHighScore()
+    private void SaveHighScores()
     {
-        PlayerPrefs.SetInt(HIGH_SCORE_KEY, HighScore);
-        PlayerPrefs.Save(); // Important to actually write to disk
+        string json = JsonUtility.ToJson(highScoreData);
+        PlayerPrefs.SetString(HIGH_SCORE_DATA_KEY, json);
+        PlayerPrefs.Save();
     }
 
     void Update()
@@ -186,11 +237,46 @@ public class ScoreManager : MonoBehaviour
         if (finalScore > HighScore)
         {
             HighScore = finalScore;
-            SaveHighScore();
+            SaveHighScores();
+        }
+
+        // Check if score qualifies for leaderboard
+        if (highScoreData.IsHighScore(finalScore))
+        {
+            yield return StartCoroutine(ShowInitialsInput(finalScore));
         }
 
         ShowGameStats();
         OnGameOver?.Invoke();
+    }
+
+    private IEnumerator ShowInitialsInput(int finalScore)
+    {
+        initialsInputPanel.SetActive(true);
+        initialsInputField.text = "";
+        initialsInputField.characterLimit = 4;
+
+        // Wait for player to enter initials
+        bool inputCompleted = false;
+        initialsInputField.onEndEdit.AddListener((value) => {
+            inputCompleted = true;
+        });
+
+        while (!inputCompleted)
+        {
+            yield return null;
+        }
+
+        // Add to leaderboard
+        highScoreData.AddScore(new ScoreEntry(initialsInputField.text.ToUpper(), finalScore));
+        SaveHighScores();
+
+        initialsInputPanel.SetActive(false);
+    }
+
+    public HighScoreData GetHighScoreData()
+    {
+        return highScoreData;
     }
 
     private int CalculateFinalScore()

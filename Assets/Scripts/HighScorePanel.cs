@@ -11,6 +11,10 @@ public class HighScorePanel : MonoBehaviour
     public Button exitButton;
     public Animator panelAnimator;
 
+    [Header("Score Display References")]
+    public TextMeshProUGUI[] initialsTexts; // Size 3
+    public TextMeshProUGUI[] scoreTexts;    // Size 3
+
     [Header("Animation Parameters")]
     public string showTrigger = "Show";
     public string hideTrigger = "Hide";
@@ -80,7 +84,21 @@ public class HighScorePanel : MonoBehaviour
 
     private void LoadAndDisplayHighScore()
     {
-        int highScore = PlayerPrefs.GetInt("HighScore", 0);
-        highScoreText.text = $"HIGH SCORE: {highScore}";
+        HighScoreData highScoreData = ScoreManager.Instance.GetHighScoreData();
+
+        // Display all top scores
+        for (int i = 0; i < 3; i++)
+        {
+            if (i < highScoreData.topScores.Count)
+            {
+                initialsTexts[i].text = highScoreData.topScores[i].initials;
+                scoreTexts[i].text = highScoreData.topScores[i].score.ToString();
+            }
+            else
+            {
+                initialsTexts[i].text = "---";
+                scoreTexts[i].text = "0";
+            }
+        }
     }
 }
